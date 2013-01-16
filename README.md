@@ -7,12 +7,24 @@ Simple bash resistance calculator.
 Download gtres and put it in your $PATH. You could try this:
 
 ```bash
-curl -o /usr/local/bin https://raw.github.com/seanirby/gtres/master/gtres
+sudo curl -o /usr/local/bin/gtres https://raw.github.com/seanirby/gtres/master/gtres
+sudo chmod u+x /usr/local/bin/gtres
 ```
 
 ## Usage
 
 gtres is used by providing a sequential list of colors corresponding to a valid 4, 5, or 6 band resistor definition. 
+
+The order of arguments shall consist of the significant figures followed by the multiplier, the tolerance, and finally the temperature coefficient. See (http://www.michaels-electronics-lessons.com/images/resistor-color-code-all.gif) .
+
+Examples:
+```bash
+$ gtres ora ora red sil
+3300 Ohms, +-10%
+$ gtres bro bla bla bla gol
+100 Ohms, +-5%
+$ gtres red pur blu bla gol bro
+276 Ohms, +-5%, 100 ppm
 
 Valid color inputs are:
 ```bash
@@ -30,16 +42,6 @@ Valid color inputs are:
 "gol" #Gold
 ```
 
-The order of arguments shall consist of the significant figures followed by the multiplier, the tolerance, and finally the temperature coefficient. See (http://www.michaels-electronics-lessons.com/images/resistor-color-code-all.gif) .
-
-Examples:
-```bash
-$ gtres ora ora red sil
-3300 Ohms, +-10%
-$ gtres bro bla bla bla gol
-100 Ohms, +-5%
-$ gtres red pur blu bla gol bro
-276 Ohms, +-5%, 100 ppm
 ```
 
 ## TODO
