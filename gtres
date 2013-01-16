@@ -1,0 +1,170 @@
+#! /usr/bin/env bash
+
+PROGNAME=$(basename $0)
+
+declare -a colors_abbr=('bla' 'bro' 'red' 'ora' 'yel' 'gre' 'blu' 'pur' 'gra' 'whi' 'sil' 'gol');
+
+function usage() {
+	echo "Usage: $PROGNAME The Bash Resistance Calculator.  Execute 'gtres -h' for help" >&2
+	exit 1
+}
+
+function gtres_help() {
+	echo "#TODO: Insert help text"
+}
+
+function error() {
+	echo "${@} Execute 'gtres -h' for help." >&2
+	exit 1
+}
+
+function get_color() {
+	case ${@} in
+		"0" )
+			echo "BLACK"
+			;;
+		"1" )
+			echo "BROWN"
+			;;
+		"2" )
+			echo "RED"
+			;;
+		"3" )
+			echo "ORANGE"
+			;;
+		"4" )
+			echo "YELLOW"
+			;;
+		"5" )
+			echo "GREEN"
+			;;
+		"6" )
+			echo "BLUE"
+			;;
+		"7" )
+			echo "PURPLE"
+			;;
+		"8" )
+			echo "GRAY"
+			;;
+		"9" )
+			echo "WHITE"
+			;;
+		"10" )
+			echo "SILVER"
+			;;
+		"11" )
+			echo "GOLD"
+			;;			
+	esac
+}
+
+if [[ $1 == "-h" ]]; then
+	gtres_help
+	shift
+fi
+
+#Test to see if correct number of arguments are provided
+if [[ ("${#}" -lt "4") || ("${#}" -gt "6") ]]; then
+  error "Provide 4 to 6 valid arguments.  Only ${#} arguments provided."
+fi
+
+#Test if inputs match patterns, create encoded resistor representation
+match=0
+res_enc=()
+for (( i = "1"; i <= "${#}"; i++ )) do
+	for (( j = "0"; j < ${#colors_abbr[@]}; j++)) do 
+		if [[ ${!i} == ${colors_abbr[j]} ]]; then
+			res_enc[$i-1]=$j
+			match=1
+		fi
+	done
+	if [[ $match -eq "0" ]]; then
+		#TODO provide an invalid argument error
+		error "'${!i}' is not a valid color input."
+	else
+		match=0
+	fi
+done
+
+#Step through user input to see if it describes a valid resistor.
+sig_figs=""
+mult=""
+tol=""
+temp_coeff=""
+last_ind=$((${#res_enc[@]}-1))
+cur_color=""
+for (( i=0; i <= $last_ind; i++ )) do
+
+	cur_color=$( get_color ${res_enc[$i]} )
+
+	#determine significant figures
+	if [[ ($i == [0-1] && $last_ind == "3") || ($i == [0-2] && $last_ind == [4-5] )]]; then
+		if [[ $cur_color == "GOLD" || $cur_color == "SILVER" ]]; then
+			error "$cur_color is an invalid color for the significant figures."
+		else
+			sig_figs=$sig_figs${res_enc[i]}
+		fi
+	fi	
+
+	#determine mult
+	if [[ ($i == "2" && $last_ind == "3") || ($i == "3" && $last_ind == "4") || ($i == "3" && $last_ind == "5") ]]; then
+		if [[ $cur_color == "GRAY" || $cur_color == "WHITE" ]]; then			
+			error "'$cur_color' is an invalid color for the multiplier band."
+		elif [[ $cur_color == "SILVER" ]]; then
+			mult=".01"
+		elif [[ $cur_color == "GOLD" ]]; then
+			mult=".1"
+		else
+			mult=$(( 10**${res_enc[i]} ))
+		fi
+	fi
+
+
+	#determine tolerance
+	if [[ (($i == "3" && $last_ind == "3")) || (($i == "4" && $last_ind == "4")) || ($i == "4" && $last_ind == "5") ]]; then
+		if [[ $cur_color == "SILVER" ]]; then
+			tol="10"
+		elif [[ $cur_color == "GOLD" ]]; then
+			tol="5"
+		elif [[ $cur_color == "BROWN" ]]; then
+			tol="1"
+		elif [[ $cur_color == "RED" ]]; then
+			tol="2"
+		elif [[ $cur_color == "GREEN" ]]; then
+			tol="0.5"
+		elif [[ $cur_color == "BLUE" ]]; then
+			tol="0.25"
+		elif [[ $cur_color == "PURPLE" ]]; then
+			tol="0.1"
+		else
+			error "'$cur_color' is an invalid color for the tolerance band."
+		fi
+	fi
+
+	#Determine temperature coefficient
+	if [[ $i == "5" ]]; then
+		if [[ $cur_color == "BROWN" ]]; then
+			temp_coeff="100"
+		elif [[ $cur_color == "RED" ]]; then
+			temp_coeff="50"
+		elif [[ $cur_color == "ORANGE" ]]; then
+			temp_coeff="15"
+		elif [[ $cur_color == "YELLOW" ]]; then
+			temp_coeff="25"
+		else
+			error "'$cur_color' is an invalid color for the temparature coefficient band."
+		fi
+	fi
+done
+
+resistance=$(echo "$mult * $sig_figs;" | bc)
+resistance="$resistance Ohms, +-$tol%"
+if [[ $temp_coeff == "" ]]; then
+	echo "$resistance"
+	exit 1
+else
+	resistance="$resistance, $temp_coeff ppm"
+	echo "$resistance"
+	exit 1
+fi
