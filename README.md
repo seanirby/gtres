@@ -25,6 +25,7 @@ $ gtres bro bla bla bla gol
 100 Ohms, +-5%
 $ gtres red pur blu bla gol bro
 276 Ohms, +-5%, 100 ppm
+```
 
 Valid color inputs are:
 ```bash
@@ -40,8 +41,6 @@ Valid color inputs are:
 "whi" #White
 "sil" #Silver
 "gol" #Gold
-```
-
 ```
 
 ## TODO
