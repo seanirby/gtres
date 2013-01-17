@@ -8,7 +8,7 @@ Download gtres and put it in your $PATH. You could try this:
 
 ```bash
 sudo curl -o /usr/local/bin/gtres https://raw.github.com/seanirby/gtres/master/gtres
-sudo chmod u+x /usr/local/bin/gtres
+sudo chmod o+x /usr/local/bin/gtres
 ```
 
 ## Usage
