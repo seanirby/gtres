@@ -44,10 +44,10 @@ Valid color inputs are:
 ```
 
 ## TODO
-	*	Add help text
-	* Expand input options. 
-			E.g. "bla, "BLACK", "black", "bLaC" valid are valid inputs
-	* Prettify output. 
-			E.g. "6 MOhms..." instead of "6000000 Ohms..."
-	* Validate that input resistor matches with an EIA standard resistor value.  Provide output warning if it doesn't
-	* Provide support for weird resistors like 0 ohm.
+*	Add help text
+* Expand input options. 
+		E.g. "bla, "BLACK", "black", "bLaC" valid are valid inputs
+* Prettify output. 
+		E.g. "6 MOhms..." instead of "6000000 Ohms..."
+* Validate that input resistor matches with an EIA standard resistor value.  Provide output warning if it doesn't
+* Provide support for weird resistors like 0 ohm.
